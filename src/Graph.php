@@ -51,14 +51,20 @@ class Graph {
 
 	/** @return array<Connection> */
 	public function getConnectionsTo(Node $node):array {
-		$filtered = array_filter(
+		return array_filter(
 			$this->connectionArray,
 			fn(Connection $connection) => $connection->isTo($node)
 		);
-		return $filtered;
 	}
 
-	/** array<Node> */
+	public function getAllConnections(Node $node):array {
+		return array_filter(
+			$this->connectionArray,
+			fn(Connection $connection) => $connection->isFrom($node) || $connection->isTo($node)
+		);
+	}
+
+	/** @return array<Node> */
 	public function findShortestPath(Node $from, Node $to):array {
 		foreach([$from, $to] as $node) {
 			if(!$this->hasNode($node)) {
@@ -70,9 +76,8 @@ class Graph {
 		$distance = [];
 		$previous = [];
 
+		// Reset all vertices to infinity distance:
 		$distance[spl_object_id($from)] = 0;
-
-		// Reset everything:
 		foreach($this->nodeArray as $node) {
 			$id = spl_object_id($node);
 			if($from !== $node) {
@@ -83,7 +88,7 @@ class Graph {
 		}
 
 		// Dijkstra's algorithm:
-		for($i = 0, $len = count($this->nodeArray) * count($this->nodeArray); $i < $len; $i++) {
+		for($i = 0, $len = count($this->nodeArray) * count($this->nodeArray); $i <= $len; $i++) {
 			if($queue->count() === 0) {
 				break;
 			}
@@ -92,12 +97,11 @@ class Graph {
 				break;
 			}
 
-			$idNext = spl_object_id($nextNode);
-
-			foreach($this->getConnectionsTo($nextNode) as $connection) {
+			$id = spl_object_id($nextNode);
+			foreach($this->getAllConnections($nextNode) as $connection) {
 				$newNode = ($connection->to === $nextNode) ? $connection->from : $connection->to;
 				$newId = spl_object_id($newNode);
-				$newDistance = $connection->weight + $distance[$idNext];
+				$newDistance = $connection->weight + $distance[$id];
 
 				if($newDistance < $distance[$newId]) {
 					$distance[$newId] = $newDistance;
@@ -108,10 +112,22 @@ class Graph {
 		}
 
 		$result = [];
-		$idTo = spl_object_id($to);
+		$id = spl_object_id($to);
 
-		if(!$previous[$idTo]) {
+		if(!$previous[$id]) {
 			throw new NodesNotConnectedException();
 		}
+
+		array_push($result, $to);
+		for($i = 0, $len = count($this->nodeArray); $i <= $len; $i++) {
+			if(!$previous[$id]) {
+				break;
+			}
+
+			array_push($result, $previous[$id]);
+			$id = spl_object_id($previous[$id]);
+		}
+
+		return array_reverse($result);
 	}
 }

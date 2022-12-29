@@ -155,4 +155,12 @@ class GraphTest extends TestCase {
 		self::expectException(NodesNotConnectedException::class);
 		self::assertSame([$n1, $n2], $sut->findShortestPath($n1, $n2));
 	}
+
+	public function testFindShortestPath_onlyTwoNodes():void {
+		$n1 = self::createMock(Node::class);
+		$n2 = self::createMock(Node::class);
+		$sut = new Graph($n1, $n2);
+		$sut->connect($n1, $n2);
+		self::assertSame([$n1, $n2], $sut->findShortestPath($n1, $n2));
+	}
 }
