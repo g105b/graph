@@ -184,4 +184,28 @@ class GraphTest extends TestCase {
 		$sut->connect($n2, $n3, 1);
 		self::assertSame([$n1, $n2, $n3], $sut->findShortestPath($n1, $n3));
 	}
+
+	public function testFindShortestPath_skipMultipleHops():void {
+		$n1 = self::createMock(Node::class);
+		$n2 = self::createMock(Node::class);
+		$n3 = self::createMock(Node::class);
+		$n4 = self::createMock(Node::class);
+		$n5 = self::createMock(Node::class);
+		$n6 = self::createMock(Node::class);
+		$n7 = self::createMock(Node::class);
+		$n8 = self::createMock(Node::class);
+		$sut = new Graph($n1, $n2, $n3, $n4, $n5, $n6, $n7, $n8);
+		$sut->connect($n1, $n2);
+		$sut->connect($n2, $n3);
+		$sut->connect($n3, $n4);
+		$sut->connect($n4, $n5);
+		$sut->connect($n5, $n6);
+		$sut->connect($n6, $n7);
+		$sut->connect($n7, $n8);
+
+		$sut->connect($n3, $n6);
+		$sut->connect($n6, $n8);
+
+		self::assertSame([$n1, $n2, $n3, $n6, $n8], $sut->findShortestPath($n1, $n8));
+	}
 }
