@@ -25,9 +25,8 @@ class Graph {
 	}
 
 	public function isConnected(Node $nodeFrom, Node $nodeTo):bool {
-		$allConnections = $this->getConnectionsFrom($nodeFrom);
-		foreach($allConnections as $connection) {
-			if($connection->isFrom($nodeFrom) && $connection->isTo($nodeTo)) {
+		foreach($this->getConnectionsFrom($nodeFrom) as $fromConnection) {
+			if($fromConnection->isTo($nodeTo)) {
 				return true;
 			}
 		}
@@ -45,9 +44,10 @@ class Graph {
 
 	/** @return array<Connection> */
 	public function getConnectionsTo(Node $node):array {
-		return array_filter(
+		$filtered = array_filter(
 			$this->connectionArray,
 			fn(Connection $connection) => $connection->isTo($node)
 		);
+		return $filtered;
 	}
 }

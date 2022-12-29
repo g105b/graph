@@ -77,4 +77,52 @@ class GraphTest extends TestCase {
 		self::assertFalse($sut->isConnected($node1, $node2));
 		self::assertTrue($sut->isConnected($node1, $node3));
 	}
+
+	public function testGetConnectionsFrom():void {
+		$sut = new Graph();
+		$node1 = self::createMock(Node::class);
+		$node2 = self::createMock(Node::class);
+		$node3 = self::createMock(Node::class);
+		$connection1to3 = self::createMock(Connection::class);
+		$connection2to1 = self::createMock(Connection::class);
+
+		$connection1to3->method("isFrom")
+			->with($node1)
+			->willReturn(true);
+		$connection1to3->method("isFrom")
+			->with($node2)
+			->willReturn(false);
+		$connection1to3->method("isFrom")
+			->with($node3)
+			->willReturn(false);
+
+		$connection2to1->method("isFrom")
+			->with($node1)
+			->willReturn(false);
+		$connection2to1->method("isFrom")
+			->with($node2)
+			->willReturn(true);
+		$connection2to1->method("isFrom")
+			->with($node3)
+			->willReturn(false);
+
+		$sut->addConnection($connection2to1);
+		$sut->addConnection($connection1to3);
+		self::assertContains($connection1to3, $sut->getConnectionsFrom($node1));
+	}
+
+	public function testGetConnectionsTo():void {
+		$sut = new Graph();
+		$connection1 = self::createMock(Connection::class);
+		$connection2 = self::createMock(Connection::class);
+		$node = self::createMock(Node::class);
+
+		$connection1->expects(self::exactly(1))
+			->method("isTo")
+			->with($node);
+
+		$sut->addConnection($connection1);
+		$sut->addConnection($connection2);
+		$sut->getConnectionsTo($node);
+	}
 }
