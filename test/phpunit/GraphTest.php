@@ -163,4 +163,14 @@ class GraphTest extends TestCase {
 		$sut->connect($n1, $n2);
 		self::assertSame([$n1, $n2], $sut->findShortestPath($n1, $n2));
 	}
+
+	public function testFindShortestPath_threeNodes():void {
+		$n1 = self::createMock(Node::class);
+		$n2 = self::createMock(Node::class);
+		$n3 = self::createMock(Node::class);
+		$sut = new Graph($n1, $n2, $n3);
+		$sut->connect($n1, $n2);
+		$sut->connect($n2, $n3);
+		self::assertSame([$n1, $n2, $n3], $sut->findShortestPath($n1, $n3));
+	}
 }
