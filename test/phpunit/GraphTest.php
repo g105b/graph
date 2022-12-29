@@ -28,4 +28,12 @@ class GraphTest extends TestCase {
 		self::assertTrue($sut->hasNode($n2));
 		self::assertFalse($sut->hasNode($n3));
 	}
+
+	public function testAddNode():void {
+		$sut = new Graph();
+		$node = self::createMock(Node::class);
+		self::assertFalse($sut->hasNode($node));
+		$sut->addNode($node);
+		self::assertTrue($sut->hasNode($node));
+	}
 }

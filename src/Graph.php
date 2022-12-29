@@ -12,6 +12,10 @@ class Graph {
 		$this->connectionArray = [];
 	}
 
+	public function addNode(Node $node):void {
+		array_push($this->nodeArray, $node);
+	}
+
 	public function hasNode(Node $node):bool {
 		return in_array($node, $this->nodeArray, true);
 	}
