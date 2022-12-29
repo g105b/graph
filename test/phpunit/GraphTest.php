@@ -3,6 +3,7 @@ namespace g105b\Graph\Test;
 
 use g105b\Graph\Connection;
 use g105b\Graph\Graph;
+use g105b\Graph\GraphException;
 use g105b\Graph\Node;
 use g105b\Graph\NodeNotInGraphException;
 use g105b\Graph\NodesNotConnectedException;
@@ -207,5 +208,52 @@ class GraphTest extends TestCase {
 		$sut->connect($n6, $n8);
 
 		self::assertSame([$n1, $n2, $n3, $n6, $n8], $sut->findShortestPath($n1, $n8));
+	}
+
+	public function testFindShortestPath_hundredsOfNodes():void {
+		$nodeArray = [];
+
+		for($i = 0; $i < 1_000; $i++) {
+			$node = self::createMock(Node::class);
+			array_push($nodeArray, $node);
+		}
+		$sut = new Graph(...$nodeArray);
+
+		for($i = 0; $i < 100; $i++) {
+			$fromIndex = array_rand($nodeArray);
+			do {
+				$toIndex = array_rand($nodeArray);
+			}
+			while($fromIndex === $toIndex);
+			$sut->connect($nodeArray[$fromIndex], $nodeArray[$toIndex]);
+		}
+
+		// Add a definite connection between two nodes, with 10 steps.
+		$stepIndexArray = [];
+		for($i = 0; $i < 10; $i++) {
+			do {
+				$stepIndex = array_rand($nodeArray);
+			}
+			while(in_array($stepIndex, $stepIndexArray));
+			array_push($stepIndexArray, $stepIndex);
+		}
+		$prevStepIndex = null;
+		foreach($stepIndexArray as $stepIndex) {
+			if($prevStepIndex) {
+				$sut->connect($nodeArray[$prevStepIndex], $nodeArray[$stepIndex]);
+			}
+
+			$prevStepIndex = $stepIndex;
+		}
+		$fromNode = $nodeArray[$stepIndexArray[0]];
+		$toNode = $nodeArray[$stepIndexArray[9]];
+
+		$exception = null;
+		try {
+			$path = $sut->findShortestPath($fromNode, $toNode);
+			self::assertLessThan(1000, count($path));
+		}
+		catch(GraphException $exception) {}
+		self::assertNull($exception);
 	}
 }
