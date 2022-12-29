@@ -1,6 +1,7 @@
 <?php
 namespace g105b\Graph\Test;
 
+use g105b\Graph\Connection;
 use g105b\Graph\Graph;
 use g105b\Graph\Node;
 use PHPUnit\Framework\TestCase;
@@ -35,5 +36,45 @@ class GraphTest extends TestCase {
 		self::assertFalse($sut->hasNode($node));
 		$sut->addNode($node);
 		self::assertTrue($sut->hasNode($node));
+	}
+
+	public function testAddConnection():void {
+		$sut = new Graph();
+		$node1 = self::createMock(Node::class);
+		$node2 = self::createMock(Node::class);
+		$connection = self::createMock(Connection::class);
+		$connection->method("isFrom")
+			->with($node1)
+			->willReturn(true);
+		$connection->method("isTo")
+			->with($node2)
+			->willReturn(true);
+		self::assertFalse($sut->isConnected($node1, $node2));
+		$sut->addConnection($connection);
+		self::assertTrue($sut->isConnected($node1, $node2));
+	}
+
+	public function testAddConnection_notConnected():void {
+		$sut = new Graph();
+		$node1 = self::createMock(Node::class);
+		$node2 = self::createMock(Node::class);
+		$node3 = self::createMock(Node::class);
+		$connection = self::createMock(Connection::class);
+
+		$connection->method("isFrom")
+			->with($node1)
+			->willReturn(true);
+		$connection->method("isTo")
+			->with($node2)
+			->willReturn(false);
+		$connection->method("isTo")
+			->with($node3)
+			->willReturn(true);
+
+		$connection = new Connection($node1, $node3);
+
+		$sut->addConnection($connection);
+		self::assertFalse($sut->isConnected($node1, $node2));
+		self::assertTrue($sut->isConnected($node1, $node3));
 	}
 }

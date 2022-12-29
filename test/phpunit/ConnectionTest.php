@@ -10,7 +10,7 @@ class ConnectionTest extends TestCase {
 		$n1 = self::createMock(Node::class);
 		$n2 = self::createMock(Node::class);
 		$sut = new Connection($n1, $n2);
-		self::assertTrue($sut->isConnected($n2));
+		self::assertTrue($sut->isToOrFrom($n2));
 	}
 
 	public function testIsConnected_not():void {
@@ -18,6 +18,6 @@ class ConnectionTest extends TestCase {
 		$n2 = self::createMock(Node::class);
 		$n3 = self::createMock(Node::class);
 		$sut = new Connection($n1, $n3);
-		self::assertFalse($sut->isConnected($n2));
+		self::assertFalse($sut->isToOrFrom($n2));
 	}
 }

@@ -8,7 +8,15 @@ class Connection {
 		public readonly float $weight = 1,
 	) {}
 
-	public function isConnected(Node $node):bool {
-		return $node === $this->from || $node === $this->to;
+	public function isFrom(Node $node):bool {
+		return $node === $this->from;
+	}
+
+	public function isTo(Node $node):bool {
+		return $node === $this->to;
+	}
+
+	public function isToOrFrom(Node $node):bool {
+		return $this->isFrom($node) || $this->isTo($node);
 	}
 }
