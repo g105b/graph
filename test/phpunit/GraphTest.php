@@ -4,6 +4,7 @@ namespace g105b\Graph\Test;
 use g105b\Graph\Connection;
 use g105b\Graph\Graph;
 use g105b\Graph\Node;
+use g105b\Graph\NodeNotInGraphException;
 use PHPUnit\Framework\TestCase;
 
 class GraphTest extends TestCase {
@@ -124,5 +125,33 @@ class GraphTest extends TestCase {
 		$sut->addConnection($connection1);
 		$sut->addConnection($connection2);
 		$sut->getConnectionsTo($node);
+	}
+
+	public function testConnect():void {
+		$sut = new Graph();
+		$n1 = self::createMock(Node::class);
+		$n2 = self::createMock(Node::class);
+		self::assertFalse($sut->isConnected($n1, $n2));
+		self::assertFalse($sut->isConnected($n2, $n1));
+		$sut->connect($n1, $n2);
+		self::assertTrue($sut->isConnected($n1, $n2));
+		self::assertFalse($sut->isConnected($n2, $n1));
+	}
+
+	public function testFindShortestPath_nodeNotInGraph():void {
+		$sut = new Graph();
+		self::expectException(NodeNotInGraphException::class);
+		$sut->findShortestPath(
+			self::createMock(Node::class),
+			self::createMock(Node::class),
+		);
+	}
+
+	public function testFindShortestPath_onlyTwoNodes():void {
+		$n1 = self::createMock(Node::class);
+		$n2 = self::createMock(Node::class);
+		$sut = new Graph($n1, $n2);
+		$sut->connect($n1, $n2);
+		self::assertSame([$n1, $n2], $sut->findShortestPath($n1, $n2));
 	}
 }

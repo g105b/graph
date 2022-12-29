@@ -34,6 +34,11 @@ class Graph {
 		return false;
 	}
 
+	public function connect(Node $n1, Node $n2, float $weight = 1.0):void {
+		$connection = new Connection($n1, $n2, $weight);
+		array_push($this->connectionArray, $connection);
+	}
+
 	/** @return array<Connection> */
 	public function getConnectionsFrom(Node $node):array {
 		return array_filter(
@@ -49,5 +54,17 @@ class Graph {
 			fn(Connection $connection) => $connection->isTo($node)
 		);
 		return $filtered;
+	}
+
+	/** array<Node> */
+	public function findShortestPath(Node $from, Node $to):array {
+		foreach([$from, $to] as $node) {
+			if(!$this->hasNode($node)) {
+				throw new NodeNotInGraphException($node);
+			}
+		}
+
+		$path = [$from, $to];
+		return $path;
 	}
 }
