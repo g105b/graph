@@ -1,6 +1,8 @@
 <?php
 namespace g105b\Graph;
 
+use SplPriorityQueue;
+
 class Graph {
 	/** @var array<Node> */
 	private array $nodeArray;
@@ -64,7 +66,52 @@ class Graph {
 			}
 		}
 
-		$path = [$from, $to];
-		return $path;
+		$queue = new SplPriorityQueue();
+		$distance = [];
+		$previous = [];
+
+		$distance[spl_object_id($from)] = 0;
+
+		// Reset everything:
+		foreach($this->nodeArray as $node) {
+			$id = spl_object_id($node);
+			if($from !== $node) {
+				$distance[$id] = INF;
+			}
+			$previous[$id] = null;
+			$queue->insert($node, -1*$distance[$id]);
+		}
+
+		// Dijkstra's algorithm:
+		for($i = 0, $len = count($this->nodeArray) * count($this->nodeArray); $i < $len; $i++) {
+			if($queue->count() === 0) {
+				break;
+			}
+			$nextNode = $queue->extract();
+			if($nextNode === $to) {
+				break;
+			}
+
+			$idNext = spl_object_id($nextNode);
+
+			foreach($this->getConnectionsTo($nextNode) as $connection) {
+				$newNode = ($connection->to === $nextNode) ? $connection->from : $connection->to;
+				$newId = spl_object_id($newNode);
+				$newDistance = $connection->weight + $distance[$idNext];
+
+				if($newDistance < $distance[$newId]) {
+					$distance[$newId] = $newDistance;
+					$previous[$newId] = $nextNode;
+					$queue->insert($newNode, -1 * $distance[$newId]);
+				}
+			}
+		}
+
+		$result = [];
+		$idTo = spl_object_id($to);
+
+		if(!$previous[$idTo]) {
+			throw new NodesNotConnectedException();
+		}
 	}
 }

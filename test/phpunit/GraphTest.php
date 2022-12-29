@@ -5,6 +5,7 @@ use g105b\Graph\Connection;
 use g105b\Graph\Graph;
 use g105b\Graph\Node;
 use g105b\Graph\NodeNotInGraphException;
+use g105b\Graph\NodesNotConnectedException;
 use PHPUnit\Framework\TestCase;
 
 class GraphTest extends TestCase {
@@ -145,6 +146,14 @@ class GraphTest extends TestCase {
 			self::createMock(Node::class),
 			self::createMock(Node::class),
 		);
+	}
+
+	public function testFindShortestPath_notConnected():void {
+		$n1 = self::createMock(Node::class);
+		$n2 = self::createMock(Node::class);
+		$sut = new Graph($n1, $n2);
+		self::expectException(NodesNotConnectedException::class);
+		self::assertSame([$n1, $n2], $sut->findShortestPath($n1, $n2));
 	}
 
 	public function testFindShortestPath_onlyTwoNodes():void {
