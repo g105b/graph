@@ -57,6 +57,7 @@ class Graph {
 		);
 	}
 
+	/** @return array<Connection> */
 	public function getAllConnections(Node $node):array {
 		return array_filter(
 			$this->connectionArray,
