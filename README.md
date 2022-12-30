@@ -3,7 +3,7 @@ Implementation of Dijkstra's algorithm
 
 Finds the shortest path between two nodes in a graph, featuring asymmetric, weighted connections.
 
-[See the Wikipedia article on Dijkstra's algorithm][wiki-dijkstra].
+[See the Wikipedia article on Dijkstra's algorithm][wiki-dijkstra], and see the example provided on the Wikipedia article in `example/wikipedia.php`.
 
 This repository represents a `Graph` object, which can contain multiple `Node` objects. Nodes can be given multiple `Connection` objects, which connect two Nodes -- in one direction -- with a weight. A bidirectional connection requires two separate connections, and a bidirectional connection may have different weights in either direction.
 
