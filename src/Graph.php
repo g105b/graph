@@ -125,7 +125,7 @@ class Graph {
 					);
 				}
 
-				$newNode = /*($connection->to === $nextNode) ? $connection->from :*/ $connection->to;
+				$newNode = $connection->to;
 				$newId = spl_object_id($newNode);
 				$newDistance = $connection->weight + $distance[$id];
 
