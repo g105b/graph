@@ -60,6 +60,8 @@ The repository is currently written as a pure implementation of the algorithm, b
 
 Optimisations are often incredibly specific to particular use cases. A typical optimisation with this algorithm is to introduce caching, and an amount of estimation (a close-enough shortest path). This can be achieved by choosing how many steps to cache for each node (X), then storing a list of all connections within X steps. This information can be stored within the Graph, greatly reducing the time complexity required to calculate lengthy paths in enormous Graphs, with the trade-off of being an estimation, rather than a perfect calculation.
 
+Another optimisation is to split the loop into multiple index-based chunks, so each chunk can be run in parallel on separate threads, or even separate computers.
+
 [wiki-dijkstra]: https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
 [php-priority-queue]: https://www.php.net/manual/en/class.splpriorityqueue.php
 [wiki-travelling-salesperson]: https://en.wikipedia.org/wiki/Travelling_salesperson_problem
