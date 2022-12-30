@@ -154,7 +154,16 @@ class GraphTest extends TestCase {
 		$n2 = self::createMock(Node::class);
 		$sut = new Graph($n1, $n2);
 		self::expectException(NodesNotConnectedException::class);
-		self::assertSame([$n1, $n2], $sut->findShortestPath($n1, $n2));
+		$sut->findShortestPath($n1, $n2);
+	}
+
+	public function testFindShortestPath_oneWay():void {
+		$n1 = self::createMock(Node::class);
+		$n2 = self::createMock(Node::class);
+		$sut = new Graph($n1, $n2);
+		$sut->connect($n2, $n1);
+		self::expectException(NodesNotConnectedException::class);
+		$sut->findShortestPath($n1, $n2);
 	}
 
 	public function testFindShortestPath_onlyTwoNodes():void {
@@ -255,5 +264,25 @@ class GraphTest extends TestCase {
 		}
 		catch(GraphException $exception) {}
 		self::assertNull($exception);
+	}
+
+	public function testFindShortestPath_callback():void {
+		$node1 = self::createMock(Node::class);
+		$node2 = self::createMock(Node::class);
+		$node3 = self::createMock(Node::class);
+		$node4 = self::createMock(Node::class);
+
+		$sut = new Graph($node1, $node2, $node3, $node4);
+		$sut->connect($node1, $node2);
+		$sut->connect($node2, $node3);
+		$sut->connect($node3, $node4);
+
+		$callbackCount = 0;
+		$callback = function(Node $node, Connection $connection)use(&$callbackCount) {
+			$callbackCount++;
+		};
+
+		$sut->findShortestPath($node1, $node4, $callback);
+		self::assertSame(3, $callbackCount);
 	}
 }

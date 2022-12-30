@@ -41,6 +41,12 @@ class Graph {
 		array_push($this->connectionArray, $connection);
 	}
 
+	public function connectBothWays(Node $n1, Node $n2, float $weight1 = 1.0, float $weight2 = 1.0):void {
+		$connection1 = new Connection($n1, $n2, $weight1);
+		$connection2 = new Connection($n2, $n1, $weight2);
+		array_push($this->connectionArray, $connection1, $connection2);
+	}
+
 	/** @return array<Connection> */
 	public function getConnectionsFrom(Node $node):array {
 		return array_filter(
@@ -65,8 +71,19 @@ class Graph {
 		);
 	}
 
-	/** @return array<Node> */
-	public function findShortestPath(Node $from, Node $to):array {
+	/**
+	 * @param callable $callback If provided, this will be called for each
+	 * iteration of the core algorithm. The callback is called for each
+	 * connection of each discovered node, with these parameters:
+	 * - Node $discoveredNode
+	 * - Connection $connectionFromDiscoveredNode
+	 * @return array<Node>
+	 */
+	public function findShortestPath(
+		Node $from,
+		Node $to,
+		?callable $callback = null,
+	):array {
 		foreach([$from, $to] as $node) {
 			if(!$this->hasNode($node)) {
 				throw new NodeNotInGraphException($node);
@@ -99,8 +116,16 @@ class Graph {
 			}
 
 			$id = spl_object_id($nextNode);
-			foreach($this->getAllConnections($nextNode) as $connection) {
-				$newNode = ($connection->to === $nextNode) ? $connection->from : $connection->to;
+			foreach($this->getConnectionsFrom($nextNode) as $connection) {
+				if($callback) {
+					call_user_func(
+						$callback,
+						$nextNode,
+						$connection,
+					);
+				}
+
+				$newNode = /*($connection->to === $nextNode) ? $connection->from :*/ $connection->to;
 				$newId = spl_object_id($newNode);
 				$newDistance = $connection->weight + $distance[$id];
 
