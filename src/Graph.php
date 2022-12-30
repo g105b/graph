@@ -41,7 +41,7 @@ class Graph {
 		array_push($this->connectionArray, $connection);
 	}
 
-	public function connectBothWays(Node $n1, Node $n2, float $weight1 = 1.0, float $weight2 = 1.0):void {
+	public function connectBidirectional(Node $n1, Node $n2, float $weight1 = 1.0, float $weight2 = 1.0):void {
 		$connection1 = new Connection($n1, $n2, $weight1);
 		$connection2 = new Connection($n2, $n1, $weight2);
 		array_push($this->connectionArray, $connection1, $connection2);
@@ -117,17 +117,19 @@ class Graph {
 
 			$id = spl_object_id($nextNode);
 			foreach($this->getConnectionsFrom($nextNode) as $connection) {
+				$newNode = $connection->to;
+				$newId = spl_object_id($newNode);
+				$newDistance = $connection->weight + $distance[$id];
+
 				if($callback) {
 					call_user_func(
 						$callback,
 						$nextNode,
 						$connection,
+						$newDistance,
+						$i,
 					);
 				}
-
-				$newNode = $connection->to;
-				$newId = spl_object_id($newNode);
-				$newDistance = $connection->weight + $distance[$id];
 
 				if($newDistance < $distance[$newId]) {
 					$distance[$newId] = $newDistance;

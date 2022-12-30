@@ -19,18 +19,18 @@ $nodeArray = [
 ];
 
 $graph = new Graph(...$nodeArray);
-$graph->connectBothWays($nodeArray[1], $nodeArray[2], 7, 7);
-$graph->connectBothWays($nodeArray[1], $nodeArray[3], 9, 9);
-$graph->connectBothWays($nodeArray[1], $nodeArray[6], 14, 14);
-$graph->connectBothWays($nodeArray[2], $nodeArray[3], 10, 10);
-$graph->connectBothWays($nodeArray[2], $nodeArray[4], 15, 15);
-$graph->connectBothWays($nodeArray[3], $nodeArray[6], 2, 2);
-$graph->connectBothWays($nodeArray[3], $nodeArray[4], 11, 11);
-$graph->connectBothWays($nodeArray[4], $nodeArray[5], 6, 6);
-$graph->connectBothWays($nodeArray[5], $nodeArray[6], 9, 9);
+$graph->connectBidirectional($nodeArray[1], $nodeArray[2], 7, 7);
+$graph->connectBidirectional($nodeArray[1], $nodeArray[3], 9, 9);
+$graph->connectBidirectional($nodeArray[1], $nodeArray[6], 14, 14);
+$graph->connectBidirectional($nodeArray[2], $nodeArray[3], 10, 10);
+$graph->connectBidirectional($nodeArray[2], $nodeArray[4], 15, 15);
+$graph->connectBidirectional($nodeArray[3], $nodeArray[6], 2, 2);
+$graph->connectBidirectional($nodeArray[3], $nodeArray[4], 11, 11);
+$graph->connectBidirectional($nodeArray[4], $nodeArray[5], 6, 6);
+$graph->connectBidirectional($nodeArray[5], $nodeArray[6], 9, 9);
 
-$callback = function(Node $node, Connection $connection):void {
-	echo "Visited $node, connected to $connection->to, weight $connection->weight", PHP_EOL;
+$callback = function(Node $node, Connection $connection, float $distance, int $index):void {
+	echo "Visited $node, connected to $connection->to, weight $connection->weight, distance $distance (step $index)", PHP_EOL;
 };
 
 $startTime = microtime(true);
