@@ -2,6 +2,7 @@
 namespace g105b\Graph\Test;
 
 use g105b\Graph\Connection;
+use g105b\Graph\NegativeWeightException;
 use g105b\Graph\Node;
 use PHPUnit\Framework\TestCase;
 
@@ -19,5 +20,14 @@ class ConnectionTest extends TestCase {
 		$n3 = self::createMock(Node::class);
 		$sut = new Connection($n1, $n3);
 		self::assertFalse($sut->isToOrFrom($n2));
+	}
+
+	public function testConstruct_negativeWeight():void {
+		self::expectException(NegativeWeightException::class);
+		new Connection(
+			self::createMock(Node::class),
+			self::createMock(Node::class),
+			-4
+		);
 	}
 }

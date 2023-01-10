@@ -6,7 +6,11 @@ class Connection {
 		public readonly Node $from,
 		public readonly Node $to,
 		public readonly float $weight = 1,
-	) {}
+	) {
+		if($weight < 0) {
+			throw new NegativeWeightException("A Connection cannot have a negative weight");
+		}
+	}
 
 	public function isFrom(Node $node):bool {
 		return $node === $this->from;
