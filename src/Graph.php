@@ -105,7 +105,10 @@ class Graph {
 			$queue->insert($node, -1*$distance[$id]);
 		}
 
-		// Dijkstra's algorithm:
+// Dijkstra's algorithm:
+// The loop is limited to the maximum number of iterations, just as a belt and
+// braces concept - the loop would happily exit in a while(true), but in case
+// there's a bug somewhere, this for loop ensures infinite loops are avoided.
 		for($i = 0, $len = count($this->nodeArray) * count($this->nodeArray); $i <= $len; $i++) {
 			if($queue->count() === 0) {
 				break;
